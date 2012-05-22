@@ -9,7 +9,7 @@ A clean package can be built using the ant command in the package's root directo
 
 The simpledb server can be started using the following command:
 
-    java -jar ./build/simpledb.jar [DATABASE NAME]
+    java -jar ./build/jar/simpledb.jar [DATABASE NAME]
 
 LICENSE
 =======
