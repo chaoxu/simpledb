@@ -3,6 +3,7 @@ package simpledb.file;
 import simpledb.server.SimpleDB;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Date;
 
 /**
  * The contents of a disk block in memory.
@@ -129,7 +130,7 @@ public class Page {
       contents.position(offset);
       contents.putInt(val);
    }
-   
+ 
    /**
     * Returns the string value at the specified offset of the page.
     * If a string was not stored at that location,
@@ -155,5 +156,60 @@ public class Page {
       byte[] byteval = val.getBytes();
       contents.putInt(byteval.length);
       contents.put(byteval);
+   }
+
+   // Homework 4: implement getDouble
+   public synchronized double getDouble(int offset) {
+      contents.position(offset);
+      return contents.getDouble();
+   }
+
+   // Homework 4: implement setDouble
+   public synchronized void setDouble(int offset, double val) {
+      contents.position(offset);
+      contents.putDouble(val);
+   }
+
+   // Homework 4: implement getBoolean
+   public synchronized boolean getBoolean(int offset) {
+      contents.position(offset);
+      byte byteval = contents.get();
+      return (byteval == 1) ? true : false;
+   }
+
+   // Homework 4: implement setBoolean
+   public synchronized void setBoolean(int offset, boolean val) {
+      contents.position(offset);
+      byte byteval = (byte)((val) ? 1 : 0);
+      contents.put(byteval);
+   }
+
+   // Homework 4: implement getBytes
+   public synchronized byte[] getBytes(int offset) {
+      contents.position(offset);
+      int len = contents.getInt();
+      byte[] bytes = new byte[len];
+      contents.get(bytes);
+      return bytes;
+   }
+
+   // Homework 4: implement setBytes
+   public synchronized void setBytes(int offset, byte[] val) {
+      contents.position(offset);
+      contents.putInt(val.length);
+      contents.put(val);
+   }
+
+   // Homework 4: implement getDate
+   public synchronized Date getDate(int offset) {
+      contents.position(offset);
+      long time = contents.getLong();
+      return new Date(time);
+   }
+
+   // Homework 4: implement setDate
+   public synchronized void setDate(int offset, Date val) {
+      contents.position(offset);
+      contents.putLong(val.getTime());
    }
 }
