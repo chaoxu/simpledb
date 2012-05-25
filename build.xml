@@ -26,4 +26,22 @@
 	</target>
 
 	<target name="main" depends="clean,compile,package" />
+
+	<target name="pagetest" depends="clean,compile">
+		<mkdir dir="${build}/jar" />
+		<jar destfile="${build}/jar/pagetest.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.file.PageTest" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="buffertest" depends="clean,compile">
+		<mkdir dir="${build}/jar" />
+		<jar destfile="${build}/jar/buffertest.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.buffer.BufferManagerTest" />
+			</manifest>
+		</jar>
+	</target>
 </project>
