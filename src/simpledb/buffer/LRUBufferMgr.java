@@ -65,7 +65,7 @@ public class LRUBufferMgr {
 
    public synchronized void printBufferPool() {
       for (int i = 0; i < bufferpool.length; i++) {
-         System.out.println("Buffer " + i + "-> Pinned: " + bufferpool[i].isPinned());
+         System.out.println("Buffer " + i + "-> Block: " + bufferpool[i].block().number() + ", Pinned: " + bufferpool[i].isPinned());
       }
    }
  
