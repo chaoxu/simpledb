@@ -23,6 +23,21 @@
 				<attribute name="Main-class" value="simpledb.server.Startup" />
 			</manifest>
 		</jar>
+		<jar destfile="${build}/jar/recordfiletest.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.record.RecordFileTest" />
+			</manifest>
+		</jar>
+		<jar destfile="${build}/jar/logviewer.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.tx.recovery.LogViewer" />
+			</manifest>
+		</jar>
+		<jar destfile="${build}/jar/testlogwriter.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.tx.recovery.TestLogWriter.java" />
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="main" depends="clean,compile,package" />
