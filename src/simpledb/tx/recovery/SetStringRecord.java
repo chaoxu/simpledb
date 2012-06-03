@@ -19,7 +19,7 @@ class SetStringRecord implements LogRecord {
     * @param oldVal the old value
     * @param newVal the new value
     */
-   public SetStringRecord(int txnum, Block blk, int offset, String oldVal) {
+   public SetStringRecord(int txnum, Block blk, int offset, String oldVal, String newVal) {
       this.txnum = txnum;
       this.blk = blk;
       this.offset = offset;

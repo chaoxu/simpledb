@@ -45,10 +45,11 @@ class CommitRecord implements LogRecord {
    }
    
    /**
-    * Does nothing, because a commit record
-    * contains no undo information.
+    * Does nothing, because a start record
+    * contains no undo or redo information.
     */
    public void undo(int txnum) {}
+   public void redo(int txnum) {}
    
    public String toString() {
       return "<COMMIT " + txnum + ">";
