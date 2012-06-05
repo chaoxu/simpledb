@@ -19,6 +19,17 @@ public class ConcurrencyMgr {
     */
    private static LockTable locktbl = new LockTable();
    private Map<Block,String> locks  = new HashMap<Block,String>();
+
+   // The transaction number that each instance of ConcurrencyMgr is assigned to
+   private int txnum;
+
+   /**
+    * Public constructor gets and defines the transaction number for each instance
+    * of this object.
+    */
+   public ConcurrencyMgr(int txnum) {
+      this.txnum = txnum;
+   }
    
    /**
     * Obtains an SLock on the block, if necessary.
