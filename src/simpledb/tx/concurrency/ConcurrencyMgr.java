@@ -39,7 +39,7 @@ public class ConcurrencyMgr {
     */
    public void sLock(Block blk) {
       if (locks.get(blk) == null) {
-         locktbl.sLock(blk);
+         locktbl.sLock(blk, txnum);
          locks.put(blk, "S");
       }
    }
@@ -54,7 +54,7 @@ public class ConcurrencyMgr {
    public void xLock(Block blk) {
       if (!hasXLock(blk)) {
          sLock(blk);
-         locktbl.xLock(blk);
+         locktbl.xLock(blk, txnum);
          locks.put(blk, "X");
       }
    }
@@ -65,7 +65,7 @@ public class ConcurrencyMgr {
     */
    public void release() {
       for (Block blk : locks.keySet())
-         locktbl.unlock(blk);
+         locktbl.unlock(blk, txnum);
       locks.clear();
    }
    

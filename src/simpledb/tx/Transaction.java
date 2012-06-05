@@ -35,7 +35,7 @@ public class Transaction {
    public Transaction() {
       txnum       = nextTxNumber();
       recoveryMgr = new RecoveryMgr(txnum);
-      concurMgr   = new ConcurrencyMgr();
+      concurMgr   = new ConcurrencyMgr(txnum);
    }
    
    /**
