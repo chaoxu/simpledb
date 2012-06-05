@@ -17,7 +17,7 @@ import java.util.*;
 class LockTable {
    private static final long MAX_TIME = 10000; // 10 seconds
    
-   private Map<Block,Integer> locks = new HashMap<Block,Integer>();
+   private Map<Block,Lock> locks = new HashMap<Block,Lock>();
    
    /**
     * Grants an SLock on the specified block.
@@ -29,15 +29,14 @@ class LockTable {
     * then an exception is thrown.
     * @param blk a reference to the disk block
     */
-   public synchronized void sLock(Block blk) {
+   public synchronized void sLock(Block blk, int txnum) {
       try {
-         long timestamp = System.currentTimeMillis();
-         while (hasXlock(blk) && !waitingTooLong(timestamp))
-            wait(MAX_TIME);
-         if (hasXlock(blk))
+         if (hasXlock(blk) && !olderThan(blk, txnum))
             throw new LockAbortException();
+         while (hasXlock(blk))
+            wait(MAX_TIME);
          int val = getLockVal(blk);  // will not be negative
-         locks.put(blk, val+1);
+         locks.get(blk).addSLock(txnum);
       }
       catch(InterruptedException e) {
          throw new LockAbortException();
@@ -54,14 +53,13 @@ class LockTable {
     * then an exception is thrown.
     * @param blk a reference to the disk block
     */
-   synchronized void xLock(Block blk) {
+   synchronized void xLock(Block blk, int txnum) {
       try {
-         long timestamp = System.currentTimeMillis();
-         while (hasOtherSLocks(blk) && !waitingTooLong(timestamp))
-            wait(MAX_TIME);
-         if (hasOtherSLocks(blk))
+         if (hasOtherSLocks(blk) && !olderThan(blk, txnum))
             throw new LockAbortException();
-         locks.put(blk, -1);
+         while (hasOtherSLocks(blk))
+            wait(MAX_TIME);
+         locks.get(blk).setXLock(txnum);
       }
       catch(InterruptedException e) {
          throw new LockAbortException();
@@ -74,30 +72,30 @@ class LockTable {
     * then the waiting transactions are notified.
     * @param blk a reference to the disk block
     */
-   synchronized void unlock(Block blk) {
+   synchronized void unlock(Block blk, int txnum) {
       int val = getLockVal(blk);
       if (val > 1)
-         locks.put(blk, val-1);
+         locks.get(blk).removeSLock(txnum);
       else {
          locks.remove(blk);
          notifyAll();
       }
    }
+
+   private boolean olderThan(Block blk, int txnum) {
+      return locks.get(blk).olderThanAllOtherTx(txnum); 
+   }
    
    private boolean hasXlock(Block blk) {
-      return getLockVal(blk) < 0;
+      return getLockVal(blk) == Lock.XLOCK_VALUE;
    }
    
    private boolean hasOtherSLocks(Block blk) {
       return getLockVal(blk) > 1;
    }
    
-   private boolean waitingTooLong(long starttime) {
-      return System.currentTimeMillis() - starttime > MAX_TIME;
-   }
-   
    private int getLockVal(Block blk) {
-      Integer ival = locks.get(blk);
-      return (ival == null) ? 0 : ival.intValue();
+      Integer ival = locks.get(blk).getValue();
+      return ival.intValue();
    }
 }
