@@ -23,6 +23,11 @@
 				<attribute name="Main-class" value="simpledb.server.Startup" />
 			</manifest>
 		</jar>
+		<jar destfile="${build}/jar/concurrencytest.jar" basedir="${build}/classes">
+			<manifest>
+				<attribute name="Main-class" value="simpledb.tx.concurrency.ConcurrencyTest" />
+			</manifest>
+		</jar>
 	</target>
 
 	<target name="main" depends="clean,compile,package" />
