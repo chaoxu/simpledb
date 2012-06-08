@@ -30,6 +30,10 @@ class LockTable {
     * @param blk a reference to the disk block
     */
    public synchronized void sLock(Block blk, int txnum) {
+
+      if (!locks.containsKey(blk))
+        locks.put(blk, new Lock());
+
       try {
          if (hasXlock(blk) && !olderThan(blk, txnum))
             throw new LockAbortException();
@@ -54,6 +58,10 @@ class LockTable {
     * @param blk a reference to the disk block
     */
    synchronized void xLock(Block blk, int txnum) {
+
+      if (!locks.containsKey(blk))
+        locks.put(blk, new Lock());
+
       try {
          if (hasOtherSLocks(blk) && !olderThan(blk, txnum))
             throw new LockAbortException();
@@ -73,6 +81,10 @@ class LockTable {
     * @param blk a reference to the disk block
     */
    synchronized void unlock(Block blk, int txnum) {
+
+      if (!locks.containsKey(blk))
+        locks.put(blk, new Lock());
+
       int val = getLockVal(blk);
       if (val > 1)
          locks.get(blk).removeSLock(txnum);
@@ -83,6 +95,10 @@ class LockTable {
    }
 
    private boolean olderThan(Block blk, int txnum) {
+
+      if (!locks.containsKey(blk))
+        locks.put(blk, new Lock());
+
       return locks.get(blk).olderThanAllOtherTx(txnum); 
    }
    
@@ -95,6 +111,10 @@ class LockTable {
    }
    
    private int getLockVal(Block blk) {
+
+      if (!locks.containsKey(blk))
+        locks.put(blk, new Lock());
+
       Integer ival = locks.get(blk).getValue();
       return ival.intValue();
    }
