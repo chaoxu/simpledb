@@ -35,14 +35,18 @@ class LockTable {
         locks.put(blk, new Lock());
 
       try {
-         if (hasXlock(blk) && !olderThan(blk, txnum))
+         if (hasXlock(blk) && !olderThan(blk, txnum)) {
+            System.out.println("T" + txnum + ": SL(" + blk.number() + ") ABORTED");
             throw new LockAbortException();
+         }
          while (hasXlock(blk))
             wait(MAX_TIME);
          int val = getLockVal(blk);  // will not be negative
          locks.get(blk).addSLock(txnum);
+         System.out.println("T" + txnum + ": SL(" + blk.number() + ") -> " + blk.toString());
       }
       catch(InterruptedException e) {
+         System.out.println("T" + txnum + ": SL(" + blk.number() + ") ABORTED");
          throw new LockAbortException();
       }
    }
@@ -63,13 +67,17 @@ class LockTable {
         locks.put(blk, new Lock());
 
       try {
-         if (hasOtherSLocks(blk) && !olderThan(blk, txnum))
+         if (hasOtherSLocks(blk) && !olderThan(blk, txnum)) {
+            System.out.println("T" + txnum + ": XL(" + blk.number() + ") ABORTED");
             throw new LockAbortException();
+         }
          while (hasOtherSLocks(blk))
             wait(MAX_TIME);
          locks.get(blk).setXLock(txnum);
+         System.out.println("T" + txnum + ": XL(" + blk.number() + ") -> " + blk.toString());
       }
       catch(InterruptedException e) {
+         System.out.println("T" + txnum + ": XL(" + blk.number() + ") ABORTED");
          throw new LockAbortException();
       }
    }
@@ -92,6 +100,8 @@ class LockTable {
          locks.remove(blk);
          notifyAll();
       }
+      System.out.println("T" + txnum + ": UL(" + blk.number() + ") -> " + blk.toString());
+
    }
 
    private boolean olderThan(Block blk, int txnum) {
